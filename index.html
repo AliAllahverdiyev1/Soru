@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kimsiniz?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;1,9..144,600&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blush:#fdeef0;
+    --rose:#d94f6b;
+    --deeprose:#8c2f45;
+    --plum:#3a1030;
+    --gold:#e8b84b;
+    --cream:#fff8f3;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; min-height:100vh;
+    background:radial-gradient(ellipse at 50% 0%, #4a1638 0%, var(--plum) 60%, #250a1c 100%);
+    color:var(--cream); font-family:'Poppins',sans-serif;
+    display:flex; align-items:center; justify-content:center;
+    overflow:hidden; position:relative; padding:24px;
+  }
+  .card{
+    max-width:520px; width:100%; text-align:center; position:relative; z-index:3;
+  }
+  .eyebrow{
+    letter-spacing:.35em; text-transform:uppercase; font-size:11px; font-weight:500;
+    color:var(--gold); margin-bottom:18px;
+  }
+  h1{
+    font-family:'Fraunces', serif; font-style:italic; font-weight:600;
+    font-size:clamp(34px,7vw,52px); margin:0 0 42px; color:var(--cream);
+  }
+  .options{
+    display:flex; flex-direction:column; gap:16px; margin-bottom:10px;
+  }
+  .opt{
+    font-family:'Poppins',sans-serif; font-weight:400; font-size:17px;
+    color:var(--cream); background:rgba(255,255,255,.06);
+    border:1px solid rgba(232,184,75,.35); border-radius:16px;
+    padding:20px 24px; cursor:pointer; text-align:left;
+    transition:transform .25s ease, background .25s ease, border-color .25s ease;
+  }
+  .opt:hover{
+    background:rgba(232,184,75,.1); border-color:var(--gold); transform:translateY(-2px);
+  }
+  .opt.chosen{
+    background:rgba(217,79,107,.18); border-color:var(--rose);
+  }
+  .quiz{ transition:opacity .6s ease, transform .6s ease; }
+  .quiz.hide{ opacity:0; transform:scale(.92); pointer-events:none; position:absolute; inset:0; }
+
+  .result{
+    opacity:0; transform:translateY(16px); transition:opacity .9s ease .2s, transform .9s ease .2s;
+  }
+  .result.show{ opacity:1; transform:translateY(0); }
+  .result .line1{
+    font-family:'Fraunces', serif; font-style:italic; font-weight:600;
+    font-size:clamp(24px,5vw,34px); margin-bottom:16px; color:var(--gold);
+  }
+  .result .line2{
+    font-size:17px; line-height:1.7; color:var(--blush); font-weight:300;
+  }
+  .result .sign{ margin-top:22px; font-style:italic; color:var(--rose); }
+
+  .petal{
+    position:fixed; top:-40px; z-index:2; pointer-events:none;
+    font-size:22px; will-change:transform;
+    animation-name:fall; animation-timing-function:linear; animation-fill-mode:forwards;
+  }
+  @keyframes fall{
+    0%{ transform:translateY(0) translateX(0) rotate(0deg); opacity:1; }
+    100%{ transform:translateY(110vh) translateX(var(--drift)) rotate(var(--spin)); opacity:.9; }
+  }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="quiz" id="quiz">
+    <div class="eyebrow">Ali'den Gözde'ye</div>
+    <h1>Kimsiniz?</h1>
+    <div class="options">
+      <div class="opt" data-choice="1">Ali'nin şu anki hayali ve gelecekteki hanımı</div>
+      <div class="opt" data-choice="2">Ali'nin gelecekteki çocuklarının annesi</div>
+    </div>
+  </div>
+
+  <div class="result" id="result">
+    <div class="line1">İkisi de doğru cevap, Gözde. 🌹</div>
+    <div class="line2">
+      Sen benim şu anki hayalim ve geleceğimin hanımısın.<br>
+      Sen bir gün çocuklarımın annesi olacak kişisin.<br><br>
+      Ali'yi sevdiğin için asla pişman olmayacaksın, Gözde hanım.
+    </div>
+    <div class="sign">— Ali</div>
+  </div>
+</div>
+
+<script>
+  const opts = document.querySelectorAll('.opt');
+  const quiz = document.getElementById('quiz');
+  const result = document.getElementById('result');
+  let chosen = false;
+
+  function petalBurst(){
+    const glyphs = ['🌹','🌸','💮'];
+    const count = 60;
+    for(let i=0;i<count;i++){
+      setTimeout(()=>{
+        const p = document.createElement('div');
+        p.className='petal';
+        p.textContent = glyphs[Math.floor(Math.random()*glyphs.length)];
+        p.style.left = Math.random()*100+'vw';
+        p.style.setProperty('--drift', (Math.random()*160-80)+'px');
+        p.style.setProperty('--spin', (Math.random()*360)+'deg');
+        p.style.animationDuration = (3.5+Math.random()*2.5)+'s';
+        p.style.fontSize = (16+Math.random()*14)+'px';
+        document.body.appendChild(p);
+        setTimeout(()=>p.remove(), 6500);
+      }, i*70);
+    }
+  }
+
+  opts.forEach(o=>{
+    o.addEventListener('click', ()=>{
+      if(chosen) return;
+      chosen = true;
+      o.classList.add('chosen');
+      petalBurst();
+      setTimeout(()=>{
+        quiz.classList.add('hide');
+        result.classList.add('show');
+      }, 500);
+      setTimeout(petalBurst, 900);
+    });
+  });
+</script>
+
+</body>
+</html>
